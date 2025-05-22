@@ -2,24 +2,27 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import auth from '@react-native-firebase/auth';
+import { FirebaseError } from 'firebase/app';
 
 const RecoverPasswordScreen = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleRecoverPassword = () => {
+  const handleRecoverPassword = async () => {
     if (!email) {
       Alert.alert('Erro', 'Por favor preencha o campo de email');
       return;
@@ -27,12 +30,19 @@ const RecoverPasswordScreen = () => {
     
     setIsLoading(true);
     
-    // Simulando uma chamada de API
-    setTimeout(() => {
-      setIsLoading(false);
-      Alert.alert('Verifique seu Email', 'Se uma conta com este email existir, um link para redefinição de senha foi enviado.');
+    try {
+      await auth().sendPasswordResetEmail(email);
+      Alert.alert(
+        'Verifique seu Email', 
+        'Se uma conta com este email existir, um link para redefinição de senha foi enviado.'
+      );
       router.replace('/login');
-    }, 1500);
+    } catch (e: any) {
+      const err = e as FirebaseError;
+      Alert.alert('Erro', 'Não foi possível enviar o email de recuperação: ' + err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -132,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    marginBottom: 24, // Aumentado para dar espaço antes do botão
+    marginBottom: 24,
     borderWidth: 1,
     borderColor: '#dcdde1',
   },

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>749440382007-cl8d1a01aqdn6pobb5mgtmb7ac2jpcsi.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.749440382007-cl8d1a01aqdn6pobb5mgtmb7ac2jpcsi</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCYFtRfxBkCmqyIzHdmwIueHqQQuZwRjM0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>749440382007</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.toodo-tcc.firebase</string>
+	<key>PROJECT_ID</key>
+	<string>toodo-tcc</string>
+	<key>STORAGE_BUCKET</key>
+	<string>toodo-tcc.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:749440382007:ios:aef91ce25143ac4c6a3bb2</string>
+</dict>
+</plist>

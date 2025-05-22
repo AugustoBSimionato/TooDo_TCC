@@ -1,62 +1,69 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import auth from "@react-native-firebase/auth";
+import { FirebaseError } from "firebase/app";
 
 const RegisterScreen = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  // const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
-  const handleRegister = () => {
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert('Erro', 'Por favor preencha todos os campos');
+  const handleRegister = async () => {
+    if (!email || !password || !confirmPassword) {
+      Alert.alert("Erro", "Por favor preencha todos os campos");
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Erro', 'As senhas não coincidem');
+      Alert.alert("Erro", "As senhas não coincidem");
       return;
     }
-    
+
     setIsLoading(true);
-    
-    // Simulando uma chamada de API
-    setTimeout(() => {
+    try {
+      await auth().createUserWithEmailAndPassword(email, password);
+      alert("Conta criada com sucesso!");
+      router.back()
+    } catch (e: any) {
+      const err = e as FirebaseError;
+      alert("Erro ao criar usuário: " + err.message);
+    } finally {
       setIsLoading(false);
-      // Navegar para a tela de login ou diretamente para a área protegida após registro
-      Alert.alert('Sucesso', 'Conta criada com sucesso!');
-      router.replace('/login'); 
-    }, 1500);
+    }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton} 
+        <TouchableOpacity
+          style={styles.backButton}
           onPress={() => router.back()}
         >
           <Ionicons name="arrow-back" size={24} color="#3498db" />
         </TouchableOpacity>
       </View>
-      
+
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}>
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.logoContainer}>
             <Text style={styles.logoText}>TooDo</Text>
@@ -64,14 +71,14 @@ const RegisterScreen = () => {
           </View>
 
           <View style={styles.formContainer}>
-            <Text style={styles.label}>Nome</Text>
+            {/* <Text style={styles.label}>Nome</Text>
             <TextInput
               style={styles.input}
               placeholder="Digite seu nome completo"
               placeholderTextColor="#A0A0A0"
               value={name}
               onChangeText={setName}
-            />
+            /> */}
 
             <Text style={styles.label}>Email</Text>
             <TextInput
@@ -89,7 +96,7 @@ const RegisterScreen = () => {
               style={styles.input}
               placeholder="Digite sua senha"
               placeholderTextColor="#A0A0A0"
-              secureTextEntry
+              // secureTextEntry
               value={password}
               onChangeText={setPassword}
             />
@@ -99,17 +106,21 @@ const RegisterScreen = () => {
               style={styles.input}
               placeholder="Confirme sua senha"
               placeholderTextColor="#A0A0A0"
-              secureTextEntry
+              // secureTextEntry
               value={confirmPassword}
               onChangeText={setConfirmPassword}
             />
 
             <TouchableOpacity
-              style={[styles.actionButton, isLoading && styles.actionButtonDisabled]}
+              style={[
+                styles.actionButton,
+                isLoading && styles.actionButtonDisabled,
+              ]}
               onPress={handleRegister}
-              disabled={isLoading}>
+              disabled={isLoading}
+            >
               <Text style={styles.actionButtonText}>
-                {isLoading ? 'Criando...' : 'Criar conta'}
+                {isLoading ? "Criando..." : "Criar conta"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -126,15 +137,15 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 16,
     height: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   backButton: {
     padding: 8,
   },
   container: {
     flex: 1,
-    backgroundColor: 'light-content',
+    backgroundColor: "light-content",
   },
   scrollContainer: {
     flexGrow: 1,
@@ -142,65 +153,65 @@ const styles = StyleSheet.create({
     paddingTop: 0,
   },
   logoContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 30,
   },
   logoText: {
     fontSize: 36,
-    fontWeight: 'bold',
-    color: '#3498db',
+    fontWeight: "bold",
+    color: "#3498db",
   },
   tagline: {
     fontSize: 16,
-    color: '#7f8c8d',
+    color: "#7f8c8d",
     marginTop: 8,
   },
   formContainer: {
-    width: '100%',
+    width: "100%",
   },
   label: {
     fontSize: 16,
     marginBottom: 8,
-    fontWeight: '500',
-    color: '#999',
+    fontWeight: "500",
+    color: "#999",
   },
   input: {
-    backgroundColor: '#f5f6fa',
+    backgroundColor: "#f5f6fa",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#dcdde1',
+    borderColor: "#dcdde1",
   },
   actionButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: "#3498db",
     borderRadius: 8,
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   actionButtonDisabled: {
-    backgroundColor: '#95a5a6',
+    backgroundColor: "#95a5a6",
   },
   actionButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   loginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 16,
   },
   loginText: {
-    color: '#7f8c8d',
+    color: "#7f8c8d",
     fontSize: 14,
   },
   loginLink: {
-    color: '#3498db',
+    color: "#3498db",
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

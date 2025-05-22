@@ -1,28 +1,27 @@
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useRouter } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import { useEffect } from "react";
-import { Platform } from "react-native";
 import "react-native-gesture-handler";
 
-// Este layout contém o Drawer e só será carregado para rotas protegidas (após login)
+import auth from "@react-native-firebase/auth";
+
 export default function ProtectedLayout() {
   const router = useRouter();
 
-  useEffect(() => {
-    if (Platform.OS === "android") {
-      require("react-native-gesture-handler");
-    }
-  }, []);
-
   const handleLogout = () => {
-    // Navegue de volta para a tela de login ao sair
-    router.replace("/login");
+    auth()
+      .signOut()
+      .then(() => {
+        router.replace("/login");
+      })
+      .catch((error) => {
+        console.error("Erro ao fazer logout:", error);
+        router.replace("/login");
+      });
   };
 
   return (
     <Drawer
-      initialRouteName="(tabs)"
       screenOptions={{
         headerShown: true,
         drawerType: "front",
@@ -32,12 +31,31 @@ export default function ProtectedLayout() {
       }}
     >
       <Drawer.Screen
-        name="(tabs)"
+        name="index"
+        options={{
+          drawerItemStyle: { height: 0 },
+          drawerLabel: () => null,
+        }}
+      />
+
+      <Drawer.Screen
+        name="tasks"
         options={{
           drawerLabel: "Tarefas",
           title: "Tarefas",
           drawerIcon: ({ color }) => (
-            <IconSymbol name="house.fill" size={22} color={color} />
+            <IconSymbol name="list.bullet" size={22} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="tasksDone"
+        options={{
+          drawerLabel: "Tarefas Concluídas",
+          title: "Tarefas Concluídas",
+          drawerIcon: ({ color }) => (
+            <IconSymbol name="checkmark.circle.fill" size={22} color={color} />
           ),
         }}
       />
@@ -70,7 +88,7 @@ export default function ProtectedLayout() {
           drawerItemPress: (e) => {
             e.preventDefault();
             handleLogout();
-          }
+          },
         }}
         options={{
           drawerLabel: "Sair",
@@ -81,7 +99,11 @@ export default function ProtectedLayout() {
             fontWeight: "500",
           },
           drawerIcon: ({ color }) => (
-            <IconSymbol name="rectangle.portrait.and.arrow.right" size={22} color="#FF3B30" />
+            <IconSymbol
+              name="rectangle.portrait.and.arrow.right"
+              size={22}
+              color="#FF3B30"
+            />
           ),
         }}
       />

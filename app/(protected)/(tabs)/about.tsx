@@ -9,7 +9,7 @@ export default function AboutScreen() {
     <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
       <ThemedView style={styles.container}>
         <Image 
-          source={require('../assets/images/icon.png')} 
+          source={require('../../../assets/images/icon.png')} 
           style={styles.logo}
           resizeMode="contain"
         />

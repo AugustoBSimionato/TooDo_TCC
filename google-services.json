@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "749440382007",
+    "project_id": "toodo-tcc",
+    "storage_bucket": "toodo-tcc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:749440382007:android:b236b76cfdbc8cae6a3bb2",
+        "android_client_info": {
+          "package_name": "com.toodotcc.firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "749440382007-kpjoe6su96bav972n0rr78colgkhdvc4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.toodotcc.firebase",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "749440382007-84hu0i9eqtsc29vejnpb6ekl98f4bqsb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0w--UYCqfR712OcqJhtaz3jhtznv9Ez8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "749440382007-84hu0i9eqtsc29vejnpb6ekl98f4bqsb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "749440382007-cl8d1a01aqdn6pobb5mgtmb7ac2jpcsi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.toodo-tcc.firebase"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -7,9 +7,11 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import auth from "@react-native-firebase/auth";
 
 type Task = {
   id: string;
@@ -19,6 +21,8 @@ type Task = {
 export default function TasksScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
+
+  const user = auth().currentUser;
 
   const addTask = () => {
     if (newTask.trim().length === 0) return;
