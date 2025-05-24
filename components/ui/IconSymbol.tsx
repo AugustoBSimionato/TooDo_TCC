@@ -15,6 +15,10 @@ const MAPPING = {
   'house.fill': 'home',
   'rectangle.portrait.and.arrow.right': 'exit-to-app',
   'trash.fill': 'delete',
+  'circle': 'circle',
+  'plus.app': 'add',
+  'plus.add': 'add',
+  'magnifyingglass': 'search',
 } as const;
 
 type IconSymbolName = keyof typeof MAPPING;

@@ -9,7 +9,7 @@ export default function AboutScreen() {
     <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
       <ThemedView style={styles.container}>
         <Image 
-          source={require('../../../assets/images/icon.png')} 
+          source={require('../../../assets/images/toodo-logo.png')} 
           style={styles.logo}
           resizeMode="contain"
         />
@@ -19,9 +19,7 @@ export default function AboutScreen() {
           Um aplicativo simples e eficiente para gerenciamento de tarefas,
           desenvolvido como projeto de TCC.
         </ThemedText>
-        <ThemedText style={styles.copyright}>
-          © {new Date().getFullYear()} Augusto Simionato
-        </ThemedText>
+        <ThemedText style={styles.copyright}>{new Date().getFullYear()} Augusto Simionato</ThemedText>
       </ThemedView>
     </SafeAreaView>
   );
@@ -41,6 +39,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     marginBottom: 20,
+    borderRadius: 20,
   },
   title: {
     fontSize: 24,

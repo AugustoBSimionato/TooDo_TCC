@@ -1,27 +1,118 @@
-import React, { useState } from 'react';
-import { Alert, FlatList, StyleSheet, TouchableOpacity, View, Platform } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import {
+  Alert,
+  FlatList,
+  Platform,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
+
 // Tipo para tarefas concluídas
 type CompletedTask = {
   id: string;
-  title: string;
-  completedAt: Date;
+  task: string;
+  isCompleted: boolean;
+  createdAt: Date;
+  userId: string;
 };
 
 export default function TasksDoneScreen() {
-  // Estado para armazenar tarefas concluídas (mock data por enquanto)
-  const [completedTasks, setCompletedTasks] = useState<CompletedTask[]>([
-    { id: '1', title: 'Finalizar relatório', completedAt: new Date(2023, 4, 15, 14, 30) },
-    { id: '2', title: 'Comprar mantimentos', completedAt: new Date(2023, 4, 14, 10, 15) },
-    { id: '3', title: 'Academia', completedAt: new Date(2023, 4, 13, 18, 45) },
-    { id: '4', title: 'Ler capítulo do livro', completedAt: new Date(2023, 4, 12, 21, 20) },
-    { id: '5', title: 'Enviar e-mail para cliente', completedAt: new Date(2023, 4, 11, 9, 0) },
-  ]);
+  const [completedTasks, setCompletedTasks] = useState<CompletedTask[]>([]);
+  const [allCompletedTasks, setAllCompletedTasks] = useState<CompletedTask[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchMode, setIsSearchMode] = useState(false);
+
+  const navigation = useNavigation();
+  const user = auth().currentUser;
+  const colorScheme = useColorScheme();
+  
+  // Cores baseadas no tema
+  const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  const borderColor = colorScheme === 'dark' ? '#48484A' : '#999';
+
+  // Configurar botão na header
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={toggleSearchMode}
+          style={styles.headerButton}
+        >
+          <IconSymbol 
+            name={isSearchMode ? "list.bullet" : "magnifyingglass"} 
+            size={22} 
+            color="#007AFF" 
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, isSearchMode]);
+
+  // Carregar tarefas concluídas do Firestore
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = firestore()
+      .collection('tasks')
+      .where('userId', '==', user.uid)
+      .where('isCompleted', '==', true)
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(querySnapshot => {
+        if (!querySnapshot) {
+          console.log('QuerySnapshot é null');
+          return;
+        }
+
+        const tasksData: CompletedTask[] = [];
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          tasksData.push({
+            id: doc.id,
+            task: data.task,
+            isCompleted: data.isCompleted,
+            createdAt: data.createdAt.toDate(),
+            userId: data.userId
+          });
+        });
+        setAllCompletedTasks(tasksData);
+        setCompletedTasks(tasksData);
+      });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Filtrar tarefas baseado na busca
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setCompletedTasks(allCompletedTasks);
+    } else {
+      const filteredTasks = allCompletedTasks.filter(task =>
+        task.task.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setCompletedTasks(filteredTasks);
+    }
+  }, [searchQuery, allCompletedTasks]);
+
+  const toggleSearchMode = () => {
+    setIsSearchMode(!isSearchMode);
+    if (isSearchMode) {
+      // Sair do modo busca
+      setSearchQuery('');
+      setCompletedTasks(allCompletedTasks);
+    }
+  };
 
   // Função para excluir tarefa
   const handleDeleteTask = (taskId: string) => {
@@ -35,14 +126,36 @@ export default function TasksDoneScreen() {
         },
         {
           text: 'Excluir',
-          onPress: () => {
-            // Remove a tarefa da lista
-            setCompletedTasks(tasks => tasks.filter(task => task.id !== taskId));
+          onPress: async () => {
+            try {
+              await firestore()
+                .collection('tasks')
+                .doc(taskId)
+                .delete();
+            } catch (error) {
+              Alert.alert('Erro', 'Não foi possível excluir a tarefa');
+              console.error('Erro ao excluir tarefa:', error);
+            }
           },
           style: 'destructive'
         }
       ]
     );
+  };
+
+  // Função para marcar tarefa como não concluída
+  const handleMarkAsIncomplete = async (taskId: string) => {
+    try {
+      await firestore()
+        .collection('tasks')
+        .doc(taskId)
+        .update({
+          isCompleted: false
+        });
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível marcar a tarefa como pendente');
+      console.error('Erro ao atualizar tarefa:', error);
+    }
   };
 
   // Formata a data para exibição
@@ -56,15 +169,59 @@ export default function TasksDoneScreen() {
     });
   };
 
+  const renderSearchSection = () => {
+    if (!isSearchMode) return null;
+    
+    return (
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={[
+            styles.searchInput,
+            { 
+              color: textColor,
+              borderColor: borderColor
+            }
+          ]}
+          placeholder="Buscar tarefas concluídas..."
+          placeholderTextColor={colorScheme === 'dark' ? '#8E8E93' : '#999'}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        <View style={[
+          styles.searchIcon,
+          { backgroundColor: colorScheme === 'dark' ? '#2C2C2E' : '#F2F2F7' }
+        ]}>
+          <IconSymbol 
+            name="magnifyingglass" 
+            size={20} 
+            color={colorScheme === 'dark' ? '#8E8E93' : '#999'} 
+          />
+        </View>
+      </View>
+    );
+  };
+
   // Se não houver tarefas concluídas, mostra mensagem
   if (completedTasks.length === 0) {
     return (
       <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
-        <ThemedView style={styles.emptyContainer}>
-          <IconSymbol name="checkmark.circle.fill" size={60} color="#8E8E93" />
-          <ThemedText style={styles.emptyText}>
-            Você ainda não tem tarefas concluídas
-          </ThemedText>
+        <ThemedView style={styles.container}>
+          {renderSearchSection()}
+          <ThemedView style={styles.emptyContainer}>
+            <IconSymbol 
+              name={isSearchMode ? "magnifyingglass" : "checkmark.circle.fill"} 
+              size={60} 
+              color="#8E8E93" 
+            />
+            <ThemedText style={styles.emptyText}>
+              {isSearchMode 
+                ? (searchQuery.trim() === '' 
+                    ? "Digite algo para buscar tarefas concluídas" 
+                    : "Nenhuma tarefa concluída encontrada")
+                : "Você ainda não tem tarefas concluídas"
+              }
+            </ThemedText>
+          </ThemedView>
         </ThemedView>
       </SafeAreaView>
     );
@@ -73,6 +230,7 @@ export default function TasksDoneScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
       <ThemedView style={styles.container}>
+        {renderSearchSection()}
         <FlatList
           style={styles.list}
           data={completedTasks}
@@ -80,15 +238,19 @@ export default function TasksDoneScreen() {
           renderItem={({ item }) => (
             <ThemedView style={styles.taskItemContainer}>
               <View style={styles.taskContent}>
-                <View style={styles.checkIconContainer}>
+                <TouchableOpacity 
+                  onPress={() => handleMarkAsIncomplete(item.id)}
+                  style={styles.checkIconContainer}
+                  activeOpacity={0.7}
+                >
                   <IconSymbol name="checkmark.circle.fill" size={22} color="#4CD964" />
-                </View>
+                </TouchableOpacity>
                 <View style={styles.taskTextContainer}>
-                  <ThemedText style={styles.taskItem} numberOfLines={1}>
-                    {item.title}
+                  <ThemedText style={styles.taskItem} numberOfLines={2}>
+                    {item.task}
                   </ThemedText>
                   <ThemedText style={styles.taskDate}>
-                    Concluída em {formatDate(item.completedAt)}
+                    Concluída em {formatDate(item.createdAt)}
                   </ThemedText>
                 </View>
               </View>
@@ -116,6 +278,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  headerButton: {
+    marginRight: 15,
+    padding: 5,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  searchInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 16,
+    marginRight: 10,
+  },
+  searchIcon: {
+    width: 43,
+    height: 43,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   list: {
     flex: 1,
@@ -149,6 +335,7 @@ const styles = StyleSheet.create({
   },
   checkIconContainer: {
     marginRight: 12,
+    padding: 4,
   },
   taskTextContainer: {
     flex: 1,
