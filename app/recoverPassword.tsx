@@ -5,7 +5,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -14,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useColorScheme } from '@/hooks/useColorScheme';
 import auth from '@react-native-firebase/auth';
 import { FirebaseError } from 'firebase/app';
 
@@ -21,6 +21,7 @@ const RecoverPasswordScreen = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const colorScheme = useColorScheme();
 
   const handleRecoverPassword = async () => {
     if (!email) {
@@ -46,31 +47,54 @@ const RecoverPasswordScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[
+      styles.safeArea,
+      { backgroundColor: colorScheme === 'dark' ? 'rgba(41, 41, 41, 0.5)' : '#ffffff' }
+    ]}>
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton} 
           onPress={() => router.back()}
         >
-          <Ionicons name="arrow-back" size={24} color="#3498db" />
+          <Ionicons 
+            name="arrow-back" 
+            size={24} 
+            color={colorScheme === 'dark' ? '#FFFFFF' : '#3498db'} 
+          />
         </TouchableOpacity>
       </View>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        style={[
+          styles.container,
+          { backgroundColor: colorScheme === 'dark' ? 'rgba(21, 21, 21, 0.5)' : '#ffffff' }
+        ]}>
+        <View style={styles.scrollContainer}>
           <View style={styles.logoContainer}>
             <Text style={styles.logoText}>TooDo</Text>
-            <Text style={styles.tagline}>Recupere sua senha</Text>
+            <Text style={[
+              styles.tagline,
+              { color: colorScheme === 'dark' ? '#CCCCCC' : '#7f8c8d' }
+            ]}>Recupere sua senha</Text>
           </View>
 
           <View style={styles.formContainer}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={[
+              styles.label,
+              { color: colorScheme === 'dark' ? '#CCCCCC' : '#999' }
+            ]}>Email</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                { 
+                  backgroundColor: colorScheme === 'dark' ? '#2C2C2E' : '#f5f6fa',
+                  borderColor: colorScheme === 'dark' ? '#48484A' : '#dcdde1',
+                  color: colorScheme === 'dark' ? '#FFFFFF' : '#000000'
+                }
+              ]}
               placeholder="Digite o email da sua conta"
-              placeholderTextColor="#A0A0A0"
+              placeholderTextColor={colorScheme === 'dark' ? '#8E8E93' : '#A0A0A0'}
               keyboardType="email-address"
               autoCapitalize="none"
               value={email}
@@ -86,7 +110,7 @@ const RecoverPasswordScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -107,7 +131,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'light-content',
   },
   scrollContainer: {
     flexGrow: 1,
@@ -125,7 +148,6 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontSize: 16,
-    color: '#7f8c8d',
     marginTop: 8,
   },
   formContainer: {
@@ -135,16 +157,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
     fontWeight: '500',
-    color: '#999',
   },
   input: {
-    backgroundColor: '#f5f6fa',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: '#dcdde1',
   },
   actionButton: {
     backgroundColor: '#3498db',

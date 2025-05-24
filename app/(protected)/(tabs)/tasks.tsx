@@ -6,7 +6,6 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
-  Platform,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -39,7 +38,17 @@ export default function TasksScreen() {
   const colorScheme = useColorScheme();
   
   const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
-  const borderColor = colorScheme === 'dark' ? '#ccc' : '#999';
+  const borderColor = colorScheme === 'dark' ? '#aaa' : '#999';
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('pt-BR', { 
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -267,6 +276,9 @@ export default function TasksScreen() {
                   <ThemedText style={styles.taskItem} numberOfLines={2}>
                     {item.task}
                   </ThemedText>
+                  <ThemedText style={styles.taskDate}>
+                    Criada em {formatDate(item.createdAt)}
+                  </ThemedText>
                 </View>
               </View>
               <TouchableOpacity
@@ -309,6 +321,7 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     marginRight: 10,
+    opacity: 0.8,
   },
   addButton: {
     width: 43,
@@ -334,7 +347,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#aaa',
+    opacity: 0.8,
   },
   list: {
     flex: 1,
@@ -346,15 +360,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    ...Platform.select({
-      ios: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
+    borderWidth: 1,
+    borderColor: '#aaa',
+    opacity: 0.8,
   },
   taskContent: {
     flex: 1,
@@ -371,6 +379,11 @@ const styles = StyleSheet.create({
   taskItem: {
     fontSize: 16,
     fontWeight: '500',
+  },
+  taskDate: {
+    fontSize: 12,
+    marginTop: 4,
+    opacity: 0.6,
   },
   deleteButton: {
     padding: 8,

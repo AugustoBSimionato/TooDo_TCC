@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 
+import { useColorScheme } from '@/hooks/useColorScheme';
 import auth from "@react-native-firebase/auth";
 import { FirebaseError } from "firebase/app";
 
@@ -20,6 +21,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const colorScheme = useColorScheme();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -42,7 +44,10 @@ const LoginScreen = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
+      style={[
+        styles.container,
+        { backgroundColor: colorScheme === 'dark' ? 'rgba(41, 41, 41, 0.5)' : '#ffffff' }
+      ]}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.logoContainer}>
@@ -51,22 +56,36 @@ const LoginScreen = () => {
         </View>
 
         <View style={styles.formContainer}>
-          <Text style={styles.label}>Email</Text>
+          <Text style={[styles.label, { color: colorScheme === 'dark' ? '#CCCCCC' : '#999' }]}>Email</Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              { 
+                backgroundColor: colorScheme === 'dark' ? '#2C2C2E' : '#f5f6fa',
+                borderColor: colorScheme === 'dark' ? '#48484A' : '#dcdde1',
+                color: colorScheme === 'dark' ? '#FFFFFF' : '#000000'
+              }
+            ]}
             placeholder="Digite seu email"
-            placeholderTextColor="#A0A0A0"
+            placeholderTextColor={colorScheme === 'dark' ? '#8E8E93' : '#A0A0A0'}
             keyboardType="email-address"
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
           />
 
-          <Text style={styles.label}>Senha</Text>
+          <Text style={[styles.label, { color: colorScheme === 'dark' ? '#CCCCCC' : '#999' }]}>Senha</Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              { 
+                backgroundColor: colorScheme === 'dark' ? '#2C2C2E' : '#f5f6fa',
+                borderColor: colorScheme === 'dark' ? '#48484A' : '#dcdde1',
+                color: colorScheme === 'dark' ? '#FFFFFF' : '#000000'
+              }
+            ]}
             placeholder="Digite sua senha"
-            placeholderTextColor="#A0A0A0"
+            placeholderTextColor={colorScheme === 'dark' ? '#8E8E93' : '#A0A0A0'}
             secureTextEntry
             value={password}
             onChangeText={setPassword}
@@ -107,7 +126,6 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "light-content",
   },
   scrollContainer: {
     flexGrow: 1,

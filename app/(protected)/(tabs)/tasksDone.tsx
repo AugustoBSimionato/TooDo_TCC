@@ -3,7 +3,6 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
-  Platform,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -38,7 +37,7 @@ export default function TasksDoneScreen() {
   const colorScheme = useColorScheme();
   
   const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
-  const borderColor = colorScheme === 'dark' ? '#48484A' : '#999';
+  const borderColor = colorScheme === 'dark' ? '#aaa' : '#999';
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -240,7 +239,7 @@ export default function TasksDoneScreen() {
                     {item.task}
                   </ThemedText>
                   <ThemedText style={styles.taskDate}>
-                    Concluída em {formatDate(item.createdAt)}
+                    Criada em {formatDate(item.createdAt)}
                   </ThemedText>
                 </View>
               </View>
@@ -285,6 +284,7 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     marginRight: 10,
+    opacity: 0.8,
   },
   searchIcon: {
     width: 43,
@@ -293,7 +293,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#aaa',
+    opacity: 0.8,
   },
   list: {
     flex: 1,
@@ -308,15 +309,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    ...Platform.select({
-      ios: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
+    borderWidth: 1,
+    borderColor: '#aaa',
+    opacity: 0.8,
   },
   taskContent: {
     flex: 1,
