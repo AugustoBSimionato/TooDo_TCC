@@ -19,7 +19,6 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 
-// Tipo para tarefas concluídas
 type CompletedTask = {
   id: string;
   task: string;
@@ -38,11 +37,9 @@ export default function TasksDoneScreen() {
   const user = auth().currentUser;
   const colorScheme = useColorScheme();
   
-  // Cores baseadas no tema
   const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
   const borderColor = colorScheme === 'dark' ? '#48484A' : '#999';
 
-  // Configurar botão na header
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -60,7 +57,6 @@ export default function TasksDoneScreen() {
     });
   }, [navigation, isSearchMode]);
 
-  // Carregar tarefas concluídas do Firestore
   useEffect(() => {
     if (!user) return;
 
@@ -93,7 +89,6 @@ export default function TasksDoneScreen() {
     return () => unsubscribe();
   }, [user]);
 
-  // Filtrar tarefas baseado na busca
   useEffect(() => {
     if (searchQuery.trim() === '') {
       setCompletedTasks(allCompletedTasks);
@@ -108,13 +103,11 @@ export default function TasksDoneScreen() {
   const toggleSearchMode = () => {
     setIsSearchMode(!isSearchMode);
     if (isSearchMode) {
-      // Sair do modo busca
       setSearchQuery('');
       setCompletedTasks(allCompletedTasks);
     }
   };
 
-  // Função para excluir tarefa
   const handleDeleteTask = (taskId: string) => {
     Alert.alert(
       'Excluir tarefa',
@@ -143,7 +136,6 @@ export default function TasksDoneScreen() {
     );
   };
 
-  // Função para marcar tarefa como não concluída
   const handleMarkAsIncomplete = async (taskId: string) => {
     try {
       await firestore()
@@ -158,7 +150,6 @@ export default function TasksDoneScreen() {
     }
   };
 
-  // Formata a data para exibição
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('pt-BR', { 
       day: '2-digit',
@@ -201,7 +192,6 @@ export default function TasksDoneScreen() {
     );
   };
 
-  // Se não houver tarefas concluídas, mostra mensagem
   if (completedTasks.length === 0) {
     return (
       <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
@@ -318,10 +308,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        shadowOffset: { width: 0, height: 1 },
+        borderWidth: 1,
+        borderColor: '#ccc',
       },
       android: {
         elevation: 2,

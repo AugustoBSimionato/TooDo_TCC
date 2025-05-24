@@ -38,11 +38,9 @@ export default function TasksScreen() {
   const user = auth().currentUser;
   const colorScheme = useColorScheme();
   
-  // Cores baseadas no tema
   const textColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
-  const borderColor = colorScheme === 'dark' ? '#48484A' : '#999';
+  const borderColor = colorScheme === 'dark' ? '#ccc' : '#999';
 
-  // Configurar botão na header
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -60,7 +58,6 @@ export default function TasksScreen() {
     });
   }, [navigation, isSearchMode]);
 
-  // Carregar tarefas do Firestore
   useEffect(() => {
     if (!user) return;
 
@@ -99,7 +96,6 @@ export default function TasksScreen() {
     return () => unsubscribe();
   }, [user]);
 
-  // Filtrar tarefas baseado na busca
   useEffect(() => {
     if (searchQuery.trim() === '') {
       setTasks(allTasks);
@@ -114,11 +110,9 @@ export default function TasksScreen() {
   const toggleSearchMode = () => {
     setIsSearchMode(!isSearchMode);
     if (isSearchMode) {
-      // Sair do modo busca
       setSearchQuery('');
       setTasks(allTasks);
     }
-    // Limpar campos ao trocar de modo
     setNewTask('');
   };
 
@@ -214,7 +208,7 @@ export default function TasksScreen() {
             styles.searchIcon,
             { backgroundColor: colorScheme === 'dark' ? '#2C2C2E' : '#F2F2F7' }
           ]}
-          onPress={() => {}} // Não faz nada, apenas visual
+          onPress={() => {}}
         >
           <IconSymbol 
             name="magnifyingglass" 
@@ -323,17 +317,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#007AFF',
     justifyContent: 'center',
     alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowRadius: 3,
-        shadowOffset: { width: 0, height: 2 },
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
   },
   addButtonDisabled: {
     opacity: 0.6,
@@ -363,10 +346,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        shadowOffset: { width: 0, height: 1 },
+        borderWidth: 1,
+        borderColor: '#ccc',
       },
       android: {
         elevation: 2,
