@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TooDo_TCC",
-    "slug": "TooDo_TCC",
+    "name": "TooDo",
+    "slug": "TooDo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/toodo-logo.png",
