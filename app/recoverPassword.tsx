@@ -135,11 +135,11 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     padding: 20,
-    paddingTop: 0,
+    paddingTop: 100,
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 100,
   },
   logoText: {
     fontSize: 36,

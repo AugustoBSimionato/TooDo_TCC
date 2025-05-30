@@ -19,7 +19,6 @@ import auth from "@react-native-firebase/auth";
 import { FirebaseError } from "firebase/app";
 
 const RegisterScreen = () => {
-  // const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -186,10 +185,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 20,
     paddingTop: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logoContainer: {
     alignItems: "center",
-    marginBottom: 30,
+    marginBottom: 60,
   },
   logoText: {
     fontSize: 36,
