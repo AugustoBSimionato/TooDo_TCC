@@ -30,7 +30,6 @@ export default function TasksDoneScreen() {
   const [completedTasks, setCompletedTasks] = useState<CompletedTask[]>([]);
   const [allCompletedTasks, setAllCompletedTasks] = useState<CompletedTask[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchMode, setIsSearchMode] = useState(false);
 
   const navigation = useNavigation();
   const user = auth().currentUser;
@@ -41,20 +40,9 @@ export default function TasksDoneScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={toggleSearchMode}
-          style={styles.headerButton}
-        >
-          <IconSymbol 
-            name={isSearchMode ? "list.bullet" : "magnifyingglass"} 
-            size={22} 
-            color="#007AFF" 
-          />
-        </TouchableOpacity>
-      ),
+      headerRight: () => null,
     });
-  }, [navigation, isSearchMode]);
+  }, [navigation]);
 
   useEffect(() => {
     if (!user) return;
@@ -98,14 +86,6 @@ export default function TasksDoneScreen() {
       setCompletedTasks(filteredTasks);
     }
   }, [searchQuery, allCompletedTasks]);
-
-  const toggleSearchMode = () => {
-    setIsSearchMode(!isSearchMode);
-    if (isSearchMode) {
-      setSearchQuery('');
-      setCompletedTasks(allCompletedTasks);
-    }
-  };
 
   const handleDeleteTask = (taskId: string) => {
     Alert.alert(
@@ -160,8 +140,6 @@ export default function TasksDoneScreen() {
   };
 
   const renderSearchSection = () => {
-    if (!isSearchMode) return null;
-    
     return (
       <View style={styles.searchContainer}>
         <TextInput
@@ -191,24 +169,39 @@ export default function TasksDoneScreen() {
     );
   };
 
-  if (completedTasks.length === 0) {
+  if (completedTasks.length === 0 && searchQuery.trim() === '') {
     return (
       <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
         <ThemedView style={styles.container}>
           {renderSearchSection()}
           <ThemedView style={styles.emptyContainer}>
             <IconSymbol 
-              name={isSearchMode ? "magnifyingglass" : "checkmark.circle.fill"} 
+              name={"checkmark.circle.fill"} 
               size={60} 
               color="#8E8E93" 
             />
             <ThemedText style={styles.emptyText}>
-              {isSearchMode 
-                ? (searchQuery.trim() === '' 
-                    ? "Digite algo para buscar tarefas concluídas" 
-                    : "Nenhuma tarefa concluída encontrada")
-                : "Você ainda não tem tarefas concluídas"
-              }
+              {"Você ainda não tem tarefas concluídas"} 
+            </ThemedText>
+          </ThemedView>
+        </ThemedView>
+      </SafeAreaView>
+    );
+  }
+  
+  if (completedTasks.length === 0 && searchQuery.trim() !== '') {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={['left', 'right']}>
+        <ThemedView style={styles.container}>
+          {renderSearchSection()}
+          <ThemedView style={styles.emptyContainer}>
+            <IconSymbol 
+              name={"magnifyingglass"} 
+              size={60} 
+              color="#8E8E93" 
+            />
+            <ThemedText style={styles.emptyText}>
+              Nenhuma tarefa concluída encontrada
             </ThemedText>
           </ThemedView>
         </ThemedView>
